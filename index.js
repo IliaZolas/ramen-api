@@ -30,4 +30,4 @@ app.use(bodyParser.json());
 app.use(express.json())
 app.use(cors())
 app.use('/', routesUrls)
-app.listen(PORT, '0.0.0.0')
+app.listen(PORT)
