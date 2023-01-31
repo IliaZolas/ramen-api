@@ -120,7 +120,7 @@ routes.put('/app/user/update/:id', auth, (req, res) => {
         name: req.body.name,
         surname: req.body.surname,
         email: req.body.email,
-        // password: hashedPassword,
+
         imageUrl: req.body.imageUrl,
         public_id: req.body.publicId
         })
