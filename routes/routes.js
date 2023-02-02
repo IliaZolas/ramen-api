@@ -20,7 +20,6 @@ routes.get('/', (req, res) => {
 
 // User Routes
 
-
 routes.post('/app/signup', (req, res) =>{
 
     bcrypt
