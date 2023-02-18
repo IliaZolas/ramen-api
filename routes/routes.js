@@ -59,46 +59,46 @@ routes.post('/app/signup', (req, res) =>{
 
 
 routes.post('/app/login', (req, res) => {
-    Users.findOne({ email: req.body.email })
-    .then((user) => {
-    bcrypt
-        .compare(req.body.password, user.password)
-        .then((passwordCheck) => {
-        if(!passwordCheck) {
-            return res.status(400).send({
-            message: "Passwords does not match",
-            error,
-            })
-        }
+    console.log("login route triggered")
 
-        const token = jwt.sign(
-            {
-            userId: user._id,
-            userEmail: user.email,
-            },
-            "RANDOM-TOKEN",
-            { expiresIn: "24h" }
-        )
-        res.status(200).send({
-            message: "Login Successful",
-            email: user.email,
-            userId: user._id,
-            token,
+        Users.findOne({ email: req.body.email })
+        .then((user) => {
+            console.log("user object:",user)
+        bcrypt
+            .compare(req.body.password, user.password)
+            .then((passwordCheck) => {
+                console.log("password check object:", passwordCheck)
+                if(!passwordCheck ) {
+                    console.log( "No password provided")
+                }
+                const token = jwt.sign(
+                    {
+                    userId: user._id,
+                    userEmail: user.email,
+                    },
+                    "RANDOM-TOKEN",
+                    { expiresIn: "24h" }
+                )
+                res.status(200).send({
+                    message: "Login Successful",
+                    email: user.email,
+                    userId: user._id,
+                    token,
+                })
+            })
+            .catch((error) => {
+            res.status(400).send({
+                message: "Passwords do not match",
+                error,
+            });
+            });
         })
+        .catch((e) => {
+        res.status(404).send({
+            message: "Email not found",
+            e,
         })
-        .catch((error) => {
-        res.status(400).send({
-            message: "Passwords does not match",
-            error,
-        });
-        });
-    })
-    .catch((e) => {
-    res.status(404).send({
-        message: "Email not found",
-        e,
-    })
-    })
+        }) 
 })
 
 
