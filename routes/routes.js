@@ -63,7 +63,6 @@ routes.post('/app/login', (req, res) => {
 
         Users.findOne({ email: req.body.email })
         .then((user) => {
-            console.log("user object:",user)
         bcrypt
             .compare(req.body.password, user.password)
             .then((passwordCheck) => {
