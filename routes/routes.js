@@ -2,7 +2,9 @@ const express = require('express')
 const routes = express.Router()
 const newUserTemplateCopy = require('../models/users')
 const newRamenTemplateCopy = require('../models/ramens')
+const newIngredientTemplateCopy = require('../models/ingredients')
 const Ramens = require('../models/ramens')
+const Ingredients = require('../models/ingredients')
 const Users = require('../models/users')
 const AWS = require('aws-sdk')
 const upload = require('../middleware/multer-aws')
@@ -19,6 +21,7 @@ routes.get('/', (req, res) => {
 })
 
 // User Routes
+
 
 routes.post('/app/signup', (req, res) =>{
 
@@ -63,6 +66,7 @@ routes.post('/app/login', (req, res) => {
 
         Users.findOne({ email: req.body.email })
         .then((user) => {
+            console.log("user object:",user)
         bcrypt
             .compare(req.body.password, user.password)
             .then((passwordCheck) => {
@@ -97,7 +101,8 @@ routes.post('/app/login', (req, res) => {
             message: "Email not found",
             e,
         })
-        }) 
+        })
+    
 })
 
 
@@ -105,6 +110,7 @@ routes.get('/app/user/show/:id', (req, res) => {
     const userId = req.params.id;
     console.log("GET SINGLE USER RECORD:", userId)
 
+    
     Users.findOne({_id: userId})
     .then(data => res.json(data))
 })
@@ -118,7 +124,6 @@ routes.put('/app/user/update/:id', auth, (req, res) => {
         name: req.body.name,
         surname: req.body.surname,
         email: req.body.email,
-
         imageUrl: req.body.imageUrl,
         public_id: req.body.publicId
         })
@@ -232,6 +237,81 @@ routes.delete('/app/ramen/delete/:id/:public_id', auth, (req, res) => {
             .destroy(publicId)
             .then(result=>console.log("cloudinary delete", result))
             .catch(_err=> console.log("Something went wrong, please try again later."))
+})
+
+
+// Ingredient Routes
+
+routes.post('/app/ingredient/add', (req, res) =>{
+    const newIngredient = new newIngredientTemplateCopy({
+        ingredient:req.body.ingredient,
+        calories:req.body.calories,
+        imageUrl: req.body.imageUrl,
+        public_id: req.body.publicId 
+    })
+    newIngredient.save()
+    .then(data =>{
+        res.json(data)
+        console.log("Send request successful:", data)
+    })
+    .catch(error => {
+        res.json(error)
+        console.log("Send request failed", error)
+    }) 
+})
+
+routes.get('/app/ingredients', (req, res) => {
+    Ingredients.find()
+    .then(data => res.json(data))
+})
+
+routes.delete('/app/ingredient/delete/:id/:public_id', auth, (req, res) => {
+    const ingredientId = req.params.id
+    console.log(ramenId,":delete route")
+
+    Ramens.deleteOne({_id: ingredientId}, function (err, _result) {
+        if (err) {
+            res.status(400).send(`Error deleting listing with id ${ingredientId}!`);
+        } else {
+            console.log(`${ingredientId} document deleted`);
+        }
+    })
+    cloudinary.config({
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.CLOUD_API_KEY,
+        api_secret: process.env.CLOUD_API_SECRET
+    })
+
+    const publicId = req.params.public_id
+    console.log("cloudinary check public_id for delete:", publicId)
+    
+    cloudinary.v2.uploader
+            .destroy(publicId)
+            .then(result=>console.log("cloudinary delete", result))
+            .catch(_err=> console.log("Something went wrong, please try again later."))
+})
+
+routes.put('/app/ingredient/update/:id',auth, (req, res) => {
+    const ingredientId = req.params.id
+    console.log(ingredientId, "update ingredient id route")
+
+    Ingredients.updateOne({_id: ingredientId},
+        {
+            ingredient:req.body.ingredient,
+            calories:req.body.calories,
+            imageUrl: req.body.imageUrl,
+            public_id: req.body.publicId 
+        })
+        .then(data => res.json(data))
+})
+
+routes.get('/app/ingredient/show/:id', (req, res) => {
+    const ingredientId = req.params.id
+    console.log("GET SINGLE RECORD:", ingredientId)
+
+    Ingredients.findOne({_id: ingredientId})
+    .then(data => res.json(data))
+    
 })
 
 

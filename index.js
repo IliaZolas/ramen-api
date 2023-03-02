@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT || 4000
-console.log("listening on port", PORT)
+const PORT = 4000
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const routesUrls = require('./routes/routes')
@@ -30,4 +29,4 @@ app.use(bodyParser.json());
 app.use(express.json())
 app.use(cors())
 app.use('/', routesUrls)
-app.listen(PORT)
+app.listen(PORT, () => console.log(`server is running on ${PORT}`))
