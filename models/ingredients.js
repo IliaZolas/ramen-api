@@ -1,20 +1,15 @@
 const mongoose = require('mongoose')
 
 
-const newRamenTemplate = new mongoose.Schema ({ 
-        title:{
+const newIngredientTemplate = new mongoose.Schema ({ 
+        ingredient:{
             type:String,
             required:true,
         },
-        description:{
-            type:String,
+        calories:{
+            type:Number,
             required:true
         },
-        ingredients:{
-            type:String,
-            required:true
-        }
-        ,
         id:{
             type:mongoose.Types.ObjectId,
             required:false
@@ -31,4 +26,4 @@ const newRamenTemplate = new mongoose.Schema ({
         }
 })
 
-module.exports = mongoose.model('ramentable', newRamenTemplate )
+module.exports = mongoose.model('ingredienttable', newIngredientTemplate )
